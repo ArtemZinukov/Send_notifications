@@ -24,7 +24,7 @@ Python3 должен быть уже установлен. Затем испол
 
 Для запуска скрипта необходимо прописать команду в терминал:
 
-```python telegram_bot_notifications.py"```
+```python telegram_bot_notifications.py```
 
 ## Цель проекта
 
