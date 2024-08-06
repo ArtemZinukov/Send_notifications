@@ -35,7 +35,7 @@ def main():
     }
     tg_chat_id = env.str("TG_CHAT_ID")
     attempt = 0
-    timeout = 5
+    timeout = 90
     timestamp = None
     while True:
         try:
