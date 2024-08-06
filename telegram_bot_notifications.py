@@ -34,7 +34,6 @@ def main():
         'Authorization': f'Token {env.str("API_DEVMAN_TOKEN")}'
     }
     tg_chat_id = env.str("TG_CHAT_ID")
-    attempt = 0
     timeout = 90
     timestamp = None
     while True:
@@ -52,9 +51,8 @@ def main():
         except requests.exceptions.ReadTimeout:
             print('Время ожидания запроса истекло, завершаю долгое опрашивание...')
         except requests.ConnectionError as err:
-            print(f"Ошибка соединения - попытка {attempt + 1}: {err}")
+            print(f"Ошибка соединения: {err}")
             time.sleep(10)
-            attempt += 1
         except requests.exceptions.RequestException as e:
             print(f'Ошибка при долгом опрашивании: {e}')
 
