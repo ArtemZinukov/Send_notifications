@@ -8,7 +8,7 @@ from environs import Env
 URL = 'https://dvmn.org/api/long_polling/'
 
 
-def long_polling(url, headers, timestamp, timeout):
+def fetch_updates(url, headers, timestamp, timeout):
     params = {'timestamp': timestamp}
     response = requests.get(url, headers=headers, params=params, timeout=timeout)
     response.raise_for_status()
@@ -39,7 +39,7 @@ def main():
     timestamp = None
     while True:
         try:
-            updates = long_polling(URL, headers, timestamp, timeout)
+            updates = fetch_updates(URL, headers, timestamp, timeout)
             if updates['new_attempts']:
                 for new_attempt in updates['new_attempts']:
                     print(new_attempt)
