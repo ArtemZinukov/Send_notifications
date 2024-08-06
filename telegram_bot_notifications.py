@@ -42,7 +42,6 @@ def main():
             updates = fetch_updates(URL, headers, timestamp, timeout)
             if updates['new_attempts']:
                 for new_attempt in updates['new_attempts']:
-                    print(new_attempt)
                     lesson_title = new_attempt['lesson_title']
                     lesson_url = new_attempt['lesson_url']
                     lesson_negative = new_attempt['is_negative']
