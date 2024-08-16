@@ -1,5 +1,6 @@
 import time
 import logging
+import traceback
 import requests
 import telegram
 from environs import Env
@@ -93,6 +94,9 @@ def main():
             time.sleep(10)
         except requests.exceptions.RequestException as e:
             logger.error(f'Ошибка при долгом опрашивании: {e}')
+        except Exception as e:
+            logger.error(f'Ошибка: {e}')
+            logger.error(traceback.format_exc())
 
 
 if __name__ == "__main__":
