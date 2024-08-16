@@ -49,22 +49,21 @@ def fetch_updates(url, headers, timestamp, timeout, logger):
         raise
 
 
-def send_message(bot, tg_chat_id, lesson_title, lesson_url, lesson_negative, logger):
+def send_message(lesson_title, lesson_url, lesson_negative, logger):
     message = (f"Новая проверка работы!\n\n"
                f"Урок: {lesson_title}\n"
                f"Ссылка: {lesson_url}\n"
                f"Результат: {'Всё правильно! Делай дальше.' if lesson_negative else 'Урок не принят.'}")
-    bot.send_message(chat_id=tg_chat_id, text=message)
-    logger.info(f'Сообщение отправлено: {message}')
+    logger.info(message)
 
 
-def process_updates(updates, bot, tg_chat_id, logger):
+def process_updates(updates, logger):
     if updates['new_attempts']:
         for new_attempt in updates['new_attempts']:
             lesson_title = new_attempt['lesson_title']
             lesson_url = new_attempt['lesson_url']
             lesson_negative = new_attempt['is_negative']
-            send_message(bot, tg_chat_id, lesson_title, lesson_url, lesson_negative, logger)
+            send_message(lesson_title, lesson_url, lesson_negative, logger)
         return updates['new_attempts'][-1]['timestamp']
     return updates['last_attempt_timestamp']
 
@@ -86,7 +85,7 @@ def main():
     while True:
         try:
             updates = fetch_updates(URL, headers, timestamp, timeout, logger)
-            timestamp = process_updates(updates, tg_bot, tg_chat_id, logger)
+            timestamp = process_updates(updates, logger)
         except requests.exceptions.ReadTimeout:
             logger.warning('Время ожидания запроса истекло, завершаю долгое опрашивание...')
         except requests.ConnectionError as err:
