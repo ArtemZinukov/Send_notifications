@@ -21,15 +21,11 @@ class TelegramLogsHandler(logging.Handler):
         self.tg_bot.send_message(chat_id=self.chat_id, text=log_entry)
 
 
-def fetch_updates(url, headers, timestamp, timeout, logger):
+def fetch_updates(url, headers, timestamp, timeout):
     params = {'timestamp': timestamp}
-    try:
-        response = requests.get(url, headers=headers, params=params, timeout=timeout)
-        response.raise_for_status()
-        return response.json()
-    except requests.exceptions.RequestException as e:
-        logger.error(f'Ошибка при получении обновлений: {e}')
-        raise
+    response = requests.get(url, headers=headers, params=params, timeout=timeout)
+    response.raise_for_status()
+    return response.json()
 
 
 def send_message(lesson_title, lesson_url, lesson_negative, logger):
@@ -80,7 +76,7 @@ def main():
 
     while True:
         try:
-            updates = fetch_updates(URL, headers, timestamp, timeout, logger)
+            updates = fetch_updates(URL, headers, timestamp, timeout)
             timestamp = process_updates(updates, logger)
         except requests.exceptions.ReadTimeout:
             logger.warning('Время ожидания запроса истекло, завершаю долгое опрашивание...')
