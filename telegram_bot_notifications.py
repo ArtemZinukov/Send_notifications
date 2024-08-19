@@ -7,6 +7,8 @@ from environs import Env
 
 URL = 'https://dvmn.org/api/long_polling/'
 
+logger = logging.getLogger(__name__)
+
 
 class TelegramLogsHandler(logging.Handler):
     def __init__(self, tg_bot, chat_id):
@@ -17,25 +19,6 @@ class TelegramLogsHandler(logging.Handler):
     def emit(self, record):
         log_entry = self.format(record)
         self.tg_bot.send_message(chat_id=self.chat_id, text=log_entry)
-
-
-def setup_logging(tg_bot, tg_chat_id):
-    logger = logging.getLogger(__name__)
-    logger.setLevel(logging.DEBUG)
-
-    console_handler = logging.StreamHandler()
-    console_handler.setLevel(logging.INFO)
-    console_formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
-    console_handler.setFormatter(console_formatter)
-
-    telegram_handler = TelegramLogsHandler(tg_bot, tg_chat_id)
-    telegram_handler.setLevel(logging.INFO)
-    telegram_formatter = logging.Formatter('%(message)s')
-    telegram_handler.setFormatter(telegram_formatter)
-
-    logger.addHandler(console_handler)
-    logger.addHandler(telegram_handler)
-    return logger
 
 
 def fetch_updates(url, headers, timestamp, timeout, logger):
@@ -76,7 +59,20 @@ def main():
     tg_chat_id = env.str("TG_CHAT_ID")
     headers = {'Authorization': f'Token {env.str("API_DEVMAN_TOKEN")}'}
 
-    logger = setup_logging(tg_bot, tg_chat_id)
+    logger.setLevel(logging.DEBUG)
+
+    console_handler = logging.StreamHandler()
+    console_handler.setLevel(logging.INFO)
+    console_formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+    console_handler.setFormatter(console_formatter)
+
+    telegram_handler = TelegramLogsHandler(tg_bot, tg_chat_id)
+    telegram_handler.setLevel(logging.INFO)
+    telegram_formatter = logging.Formatter('%(message)s')
+    telegram_handler.setFormatter(telegram_formatter)
+
+    logger.addHandler(console_handler)
+    logger.addHandler(telegram_handler)
 
     timeout = 90
     timestamp = None
